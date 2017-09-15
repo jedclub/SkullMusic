@@ -214,8 +214,9 @@ client.on('message', message => {
 				message.reply('url > ' + url);
 				message.reply('comment > ' + comment);
 				
-				var user = client.users.get(message.id);
-				var musicObj = { url : url, comment : comment, userName : user.username };
+				//logger.info(message.id);
+				
+				var musicObj = { url : url, comment : comment, userName : message.author.username };
 				logger.info('musicObj : '  + musicObj );
 				playList.push( musicObj );
 				
