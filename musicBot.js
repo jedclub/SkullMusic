@@ -59,7 +59,7 @@ client.on('ready', () => {
 const playMusic = function() {
 	
 	if( playList.empty() == false ) {
-	//	logger.info( 'playList.empty() is false' );
+		logger.info( 'playList.empty() is false' );
 		if( !currentVoiceConnection || (currentVoiceConnection && currentVoiceConnection.speaking == false) ) {
 			
 			var music = playList.pop();
