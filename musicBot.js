@@ -36,7 +36,7 @@ var defaultVoiceChannel;
 var currentPlayDispatcher;
 var youtubeDispatcher;
 var voiceVolume = 1.0;
-var youtubeVolume = 0.08;
+var youtubeVolume = 0.1;
 var offTTS = false;
 var voiceChannelID = auth.voiceChannelID;
 // var connectVoice;
@@ -56,30 +56,43 @@ client.on('ready', () => {
 	setInterval(playMusic, 3000);
 });
 
+var ttsEnd = true;
+var youTubeEnd = true;
 
 const playMusic = function() {
 	
 	if( playList.length != 0 ) {
 		// logger.info( 'playList.empty() is false' );
-		if( !currentPlayDispatcher || (currentPlayDispatcher && currentPlayDispatcher.paused == true) ) {
-			
-			if( !youtubeDispatcher || (youtubeDispatcher && youtubeDispatcher.paused == true) ) {
+		if( youTubeEnd && ttsEnd ) {
 		
-				var music = playList.pop();
+			var music = playList.pop();
+
+			logger.info( 'music url : ' + music.url );
+			logger.info( 'music comment : ' + music.comment );
 				
-				logger.info( 'music url : ' + music.url );
-				logger.info( 'music comment : ' + music.comment );
-				
-				if( music ) {
-					if( music.comment.length > 1 )	{
-						sendTTS( music.comment, function() {
-							music.user.sendMessage(music.user.username + '님 께서 신청하신 신청 곡이 연주 됩니다.');
-							playYoutube( music.url, function() {} );
-						});
-					}
-					else {
-						playYoutube( music.url, function() {} );
-					}
+			if( music ) {
+				music.user.sendMessage(music.user.username + '님 께서 신청하신 신청 곡이 연주 됩니다.');
+					
+				if( music.comment.length > 1 )	{
+					ttsEnd = false;
+					sendTTS( music.comment, function() {
+						if( ttsEnd == false ) {
+							
+							playYoutube( music.url, function() {
+								if( youTubeEnd == false ) {
+									youTubeEnd = true;
+								}
+							});
+							ttsEnd = true;
+						}
+					});
+				}
+				else {
+					playYoutube( music.url, function() {
+						if( youTubeEnd == false ) {
+							youTubeEnd = true;
+						}
+					});
 				}
 			}
 		}
@@ -229,7 +242,7 @@ client.on('message', message => {
 				//logger.info('musicObj : '  + musicObj.toString() );
 				playList.push( musicObj );
 				
-				message.reply('[음악 신청 방법]');
+				message.reply( playList.length + '번 째로 음악이 신청 되었습니다.');
 				//playYoutube( url );
 				//offTTS = true;
 			// https://www.youtube.com/watch?v=ERadk2c8KPA
@@ -238,7 +251,6 @@ client.on('message', message => {
 				message.reply('[음악 신청 방법]');
 				message.reply('유튜브 URL 을 이용해서 음악 신청 가능. 다음과 같이 입력.');
 				message.reply('(느낌표)add https://www.youtube.com/watch?v=mRWxGCDBRNY 감성 음악 신청 합니다.');
-				
 				
 				//message.reply('[볼륨 조절 방법]');
 				//message.reply('볼륨 값은 1~0 까지 소숫 점을 이용하여 조절 가능. 다음과 같이 입력. 보통 0.1 ~ 0.03 사이 값을 추천.');
