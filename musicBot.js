@@ -104,6 +104,7 @@ const playMusic = function() {
 
 const playYoutube = function( youTubeURL, endCallBack ) {
 	
+	logger.info('call playYoutube');
 	if (defaultVoiceChannel && youTubeURL.length >= 1) {
 		
 		if( defaultVoiceChannel )	{
@@ -120,19 +121,19 @@ const playYoutube = function( youTubeURL, endCallBack ) {
 			youtubeDispatcher = connection.playStream(stream, streamOptions);
 			youtubeDispatcher.setVolume(youtubeVolume);
 			
-			youtubeDispatcher.on('volumeChange', function(oldVol,newVol) {
-				logger.info('youtube volumeChange : ' + oldVol + ' / ' + newVol );
-				
-				youtubeDispatcher.on('end', function() {
+			youtubeDispatcher.on('end', function() {
 					logger.info('youtubeDispatcher end');
 					endCallBack();
 			});
+				
+			youtubeDispatcher.on('volumeChange', function(oldVol,newVol) {
+				logger.info('youtube volumeChange : ' + oldVol + ' / ' + newVol );
+			});	
 			
 			youtubeDispatcher.on('speaking', function() {
 				logger.info('youtubeDispatcher speaking : ' + youTubeURL );
 			});
-				
-			});
+			
 		}).catch(error);
 	}
 }
@@ -229,21 +230,24 @@ client.on('message', message => {
 				
 			case 'add' : 
 			
-				var input = text.split(' ');
-				var url = input[0];
-				input.splice(0, 1);
-				var comment = input.join(' ');
-				
-				//message.reply('url > ' + url);
-				//message.reply('comment > ' + comment);
-				
-				//logger.info(message.id);
-				
-				var musicObj = { url : url, comment : comment, user : message.author };
-				//logger.info('musicObj : '  + musicObj.toString() );
-				playList.push( musicObj );
-				
-				message.reply( playList.length + '번 째로 음악이 신청 되었습니다.');
+				if( client.user.id != message.author.id ) {
+			
+					var input = text.split(' ');
+					var url = input[0];
+					input.splice(0, 1);
+					var comment = input.join(' ');
+					
+					//message.reply('url > ' + url);
+					//message.reply('comment > ' + comment);
+					
+					//logger.info(message.id);
+					
+					var musicObj = { url : url, comment : comment, user : message.author };
+					//logger.info('musicObj : '  + musicObj.toString() );
+					playList.push( musicObj );
+					
+					message.reply( playList.length + '번 째로 음악이 신청 되었습니다.');
+				}
 				//playYoutube( url );
 				//offTTS = true;
 			// https://www.youtube.com/watch?v=ERadk2c8KPA
@@ -251,7 +255,7 @@ client.on('message', message => {
 			case 'help' :
 				message.reply('[음악 신청 방법]');
 				message.reply('유튜브 URL 을 이용해서 음악 신청 가능. 다음과 같이 입력.');
-				message.reply('(느낌표)add https://www.youtube.com/watch?v=mRWxGCDBRNY 감성 음악 신청 합니다.');
+				message.reply('!add https://www.youtube.com/watch?v=mRWxGCDBRNY 감성 음악 신청 합니다.');
 				
 				//message.reply('[볼륨 조절 방법]');
 				//message.reply('볼륨 값은 1~0 까지 소숫 점을 이용하여 조절 가능. 다음과 같이 입력. 보통 0.1 ~ 0.03 사이 값을 추천.');
