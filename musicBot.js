@@ -58,10 +58,15 @@ client.on('ready', () => {
 
 const playMusic = function() {
 	
+	logger.info( 'call playMusic' );
+	
 	if( playList.empty() == false ) {
+		logger.info( 'playList.empty() is false' );
 		if( currentVoiceConnection && currentVoiceConnection.speaking == false ) {
 			
 			var music = playList.pop();
+			
+			logger.info( 'music url : ' + music.url );
 			
 			if( music ) {
 				if( music.comment.length > 1 )	{
