@@ -36,7 +36,7 @@ var defaultVoiceChannel;
 var currentPlayDispatcher;
 var youtubeDispatcher;
 var voiceVolume = 1.0;
-var youtubeVolume = 0.1;
+var youtubeVolume = 0.08;
 var offTTS = false;
 var voiceChannelID = auth.voiceChannelID;
 // var connectVoice;
@@ -56,26 +56,30 @@ client.on('ready', () => {
 	setInterval(playMusic, 3000);
 });
 
+
 const playMusic = function() {
 	
 	if( playList.length != 0 ) {
 		// logger.info( 'playList.empty() is false' );
-		if( !currentVoiceConnection || (currentVoiceConnection && currentVoiceConnection.speaking == false) ) {
+		if( !currentPlayDispatcher || (currentPlayDispatcher && currentPlayDispatcher.paused == true) ) {
 			
-			var music = playList.pop();
-			
-			logger.info( 'music url : ' + music.url );
-			logger.info( 'music comment : ' + music.comment );
-			
-			if( music ) {
-				if( music.comment.length > 1 )	{
-					sendTTS( music.comment, function() {
-						music.user.sendMessage(music.user.username + '님 께서 신청하신 신청 곡이 연주 됩니다.');
+			if( !youtubeDispatcher || (youtubeDispatcher && youtubeDispatcher.paused == true) ) {
+		
+				var music = playList.pop();
+				
+				logger.info( 'music url : ' + music.url );
+				logger.info( 'music comment : ' + music.comment );
+				
+				if( music ) {
+					if( music.comment.length > 1 )	{
+						sendTTS( music.comment, function() {
+							music.user.sendMessage(music.user.username + '님 께서 신청하신 신청 곡이 연주 됩니다.');
+							playYoutube( music.url, function() {} );
+						});
+					}
+					else {
 						playYoutube( music.url, function() {} );
-					});
-				}
-				else {
-					playYoutube( music.url, function() {} );
+					}
 				}
 			}
 		}
@@ -231,8 +235,8 @@ client.on('message', message => {
 				break;
 			case 'help' :
 				message.reply('[음악 신청 방법]');
-				message.reply('유튜브 URL 을 이용해서 음악 신청 가능. 다음과 같이 입력.');
-				message.reply('!add https://www.youtube.com/watch?v=mRWxGCDBRNY 감성 음악 신청 합니다.');
+				message.reply(' 유튜브 URL 을 이용해서 음악 신청 가능. 다음과 같이 입력.');
+				message.reply(' !add https://www.youtube.com/watch?v=mRWxGCDBRNY 감성 음악 신청 합니다.');
 				
 				
 				//message.reply('[볼륨 조절 방법]');
