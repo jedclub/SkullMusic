@@ -213,8 +213,9 @@ client.on('message', message => {
 				
 				message.reply('url > ' + url);
 				message.reply('comment > ' + comment);
-				var nickName = client.users.get(message.id).username;
-				var musicObj = { url : url, comment : comment, userName : nickName };
+				
+				var user = client.users.get(message.id);
+				var musicObj = { url : url, comment : comment, userName : user.username };
 				logger.info('musicObj : '  + musicObj );
 				playList.push( musicObj );
 				
