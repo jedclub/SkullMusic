@@ -4,7 +4,7 @@ var logger = require('winston');
 var auth = require('./auth.json');
 
 var ttsCtrl = require('./ttsCtrl.js');
-
+var Dequeue = require('dequeue')
 
 var playList = new Dequeue();
 
