@@ -36,7 +36,7 @@ var defaultVoiceChannel;
 var currentPlayDispatcher;
 var youtubeDispatcher;
 var voiceVolume = 1.0;
-var youtubeVolume = 0.05;
+var youtubeVolume = 0.1;
 var offTTS = false;
 var voiceChannelID = auth.voiceChannelID;
 // var connectVoice;
@@ -229,9 +229,18 @@ client.on('message', message => {
 				//offTTS = true;
 			// https://www.youtube.com/watch?v=ERadk2c8KPA
 				break;
+			case 'help' :
+				message.reply('[음악 신청 방법]');
+				message.reply('유튜브 URL 을 이용해서 음악 신청 가능. 다음과 같이 입력.');
+				message.reply('!add https://www.youtube.com/watch?v=mRWxGCDBRNY 감성 음악 신청 합니다.');
 				
-			case 'stop' :
-				offTTS = false;
+				
+				//message.reply('[볼륨 조절 방법]');
+				//message.reply('볼륨 값은 1~0 까지 소숫 점을 이용하여 조절 가능. 다음과 같이 입력. 보통 0.1 ~ 0.03 사이 값을 추천.');
+				//message.reply('!vol 0.1');
+				
+				break;
+			case 'next' :
 				if( youtubeDispatcher ) {
 					youtubeDispatcher.end();
 				}
