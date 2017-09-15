@@ -121,7 +121,7 @@ const playYoutube = function( youTubeURL, endCallBack ) {
 
 const sendTTS = function(ttsMsg, endCallBack ) {
 	
-	if (defaultVoiceChannel && ttsMsg.length >= 1 && offTTS == false) {
+	if (defaultVoiceChannel && ttsMsg.length >= 1) {
 		logger.info('TTS Say : ' + ttsMsg);
 		
 		if( defaultVoiceChannel )	{
