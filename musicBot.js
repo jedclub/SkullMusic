@@ -77,7 +77,7 @@ const playMusic = function() {
 					ttsEnd = false;
 					sendTTS( music.comment, function() {
 						if( ttsEnd == false ) {
-							
+							youTubeEnd = false;
 							playYoutube( music.url, function() {
 								if( youTubeEnd == false ) {
 									youTubeEnd = true;
@@ -88,6 +88,7 @@ const playMusic = function() {
 					});
 				}
 				else {
+					youTubeEnd = false;
 					playYoutube( music.url, function() {
 						if( youTubeEnd == false ) {
 							youTubeEnd = true;
