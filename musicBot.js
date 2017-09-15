@@ -221,7 +221,7 @@ client.on('message', message => {
 				//logger.info(message.id);
 				
 				var musicObj = { url : url, comment : comment, userName : message.author.username };
-				logger.info('musicObj : '  + musicObj );
+				//logger.info('musicObj : '  + musicObj.toString() );
 				playList.push( musicObj );
 				
 				//playYoutube( url );
