@@ -1,0 +1,11 @@
+{
+  "name": "skull-music-bot",
+  "version": "1.0.0",
+  "description": "Discord music bot",
+  "main": "musicBot.js",
+  "author": "jedclub",
+  "dependencies": {}
+}
+
+
+
