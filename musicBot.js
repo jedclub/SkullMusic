@@ -4,7 +4,6 @@ var logger = require('winston');
 var auth = require('./auth.json');
 
 var ttsCtrl = require('./ttsCtrl.js');
-var bossTime = require('./bossTime.js');
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
