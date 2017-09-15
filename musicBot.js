@@ -5,6 +5,9 @@ var auth = require('./auth.json');
 
 var ttsCtrl = require('./ttsCtrl.js');
 
+
+var playList = new Dequeue();
+
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, {
@@ -49,9 +52,34 @@ client.on('ready', () => {
 	}
 	
 	channel.join().then( function( connection ) {  connectVoice = connection; logger.info('Connected! voice channel.') } ).catch(error);
+	
+	setInterval(playMusic, 3000);
 });
 
-const playYoutube = function( youTubeURL ) {
+const playMusic = function() {
+	
+	if( playList.empty() == false ) {
+		if( currentVoiceConnection && currentVoiceConnection.speaking == false ) {
+			
+			var music = playList.pop();
+			
+			if( music ) {
+				if( music.comment.length > 1 )	{
+					sendTTS( music.comment, function() {
+						playYoutube( music.url, function() {} );
+					});
+				}
+				else {
+					playYoutube( music.url, function() {} );
+				}
+			}
+		}
+	}
+}
+
+
+
+const playYoutube = function( youTubeURL, endCallBack ) {
 	
 	if (defaultVoiceChannel && youTubeURL.length >= 1) {
 		
@@ -73,8 +101,8 @@ const playYoutube = function( youTubeURL ) {
 				logger.info('youtube volumeChange : ' + oldVol + ' / ' + newVol );
 				
 				youtubeDispatcher.on('end', function() {
-					offTTS = false;
 					logger.info('youtubeDispatcher end');
+					endCallBack();
 			});
 			
 			youtubeDispatcher.on('speaking', function() {
@@ -82,6 +110,47 @@ const playYoutube = function( youTubeURL ) {
 			});
 				
 			});
+		}).catch(error);
+	}
+}
+
+const sendTTS = function(ttsMsg, endCallBack ) {
+	
+	if (defaultVoiceChannel && ttsMsg.length >= 1 && offTTS == false) {
+		logger.info('TTS Say : ' + ttsMsg);
+		
+		if( defaultVoiceChannel )	{
+			defaultVoiceChannel.leave();
+		}
+				
+		defaultVoiceChannel.join().then( connection => {
+			currentVoiceConnection = connection;
+			ttsCtrl.loadTTS(ttsMsg, function(mp3FileName) { 
+			logger.info('play mp3');
+			const streamOptions = { seek: 0, volume: voiceVolume };
+			const dispatcher = connection.playFile(mp3FileName, streamOptions);
+			currentPlayDispatcher = dispatcher;
+			currentPlayDispatcher.setVolume(voiceVolume);
+			
+			dispatcher.on('end', function() {
+				logger.info('play end');
+				endCallBack();
+			});
+			
+			dispatcher.on('error', function() {
+				logger.info('play error');
+			});
+			
+			dispatcher.on('speaking', function() {
+				logger.info('play speaking');
+			});
+			
+			dispatcher.on('volumeChange', function(oldVol,newVol) {
+				logger.info('voice volumeChange : ' + oldVol + ' / ' + newVol );
+			});
+			
+			
+			}) 
 		}).catch(error);
 	}
 }
@@ -97,6 +166,8 @@ client.on('message', message => {
         
 	   
         args = args.splice(1);
+		
+		logger.info('cmd : '  + cmd );
 		 
 		switch(cmd) {
             // !ping
@@ -138,10 +209,14 @@ client.on('message', message => {
 				var input = text.split(' ');
 				var url = input[0];
 				input.splice(0, 1);
-				var comment = input.join();
+				var comment = input.join(' ');
 				
 				message.reply('url > ' + url);
 				message.reply('comment > ' + comment);
+				
+				var musicObj = { url : url, comment : comment, userName : message.member.displayName };
+				logger.info('musicObj : '  + musicObj );
+				playList.push( musicObj );
 				
 				//playYoutube( url );
 				//offTTS = true;
