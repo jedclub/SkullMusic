@@ -137,7 +137,8 @@ client.on('message', message => {
 			
 				var input = text.split(' ');
 				var url = input[0];
-				var comment = input.splice(0, 1).join();
+				input.splice(0, 1);
+				var comment = input.join();
 				
 				message.reply('url > ' + url);
 				message.reply('comment > ' + comment);
