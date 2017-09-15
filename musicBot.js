@@ -36,7 +36,7 @@ var defaultVoiceChannel;
 var currentPlayDispatcher;
 var youtubeDispatcher;
 var voiceVolume = 1.0;
-var youtubeVolume = 0.07;
+var youtubeVolume = 0.05;
 var offTTS = false;
 var voiceChannelID = auth.voiceChannelID;
 // var connectVoice;
@@ -59,7 +59,7 @@ client.on('ready', () => {
 const playMusic = function() {
 	
 	if( playList.length != 0 ) {
-		logger.info( 'playList.empty() is false' );
+		// logger.info( 'playList.empty() is false' );
 		if( !currentVoiceConnection || (currentVoiceConnection && currentVoiceConnection.speaking == false) ) {
 			
 			var music = playList.pop();
@@ -70,6 +70,7 @@ const playMusic = function() {
 			if( music ) {
 				if( music.comment.length > 1 )	{
 					sendTTS( music.comment, function() {
+						music.user.sendMessage(music.user.username + '님 께서 신청하신 신청 곡이 연주 됩니다.');
 						playYoutube( music.url, function() {} );
 					});
 				}
@@ -215,12 +216,12 @@ client.on('message', message => {
 				input.splice(0, 1);
 				var comment = input.join(' ');
 				
-				message.reply('url > ' + url);
-				message.reply('comment > ' + comment);
+				//message.reply('url > ' + url);
+				//message.reply('comment > ' + comment);
 				
 				//logger.info(message.id);
 				
-				var musicObj = { url : url, comment : comment, userName : message.author.username };
+				var musicObj = { url : url, comment : comment, user : message.author };
 				//logger.info('musicObj : '  + musicObj.toString() );
 				playList.push( musicObj );
 				
