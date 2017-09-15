@@ -229,14 +229,15 @@ client.on('message', message => {
 				//logger.info('musicObj : '  + musicObj.toString() );
 				playList.push( musicObj );
 				
+				message.reply('[음악 신청 방법]');
 				//playYoutube( url );
 				//offTTS = true;
 			// https://www.youtube.com/watch?v=ERadk2c8KPA
 				break;
 			case 'help' :
 				message.reply('[음악 신청 방법]');
-				message.reply(' 유튜브 URL 을 이용해서 음악 신청 가능. 다음과 같이 입력.');
-				message.reply(' !add https://www.youtube.com/watch?v=mRWxGCDBRNY 감성 음악 신청 합니다.');
+				message.reply('유튜브 URL 을 이용해서 음악 신청 가능. 다음과 같이 입력.');
+				message.reply('(느낌표)add https://www.youtube.com/watch?v=mRWxGCDBRNY 감성 음악 신청 합니다.');
 				
 				
 				//message.reply('[볼륨 조절 방법]');
