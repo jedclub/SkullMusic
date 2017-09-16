@@ -4,9 +4,9 @@ var logger = require('winston');
 var auth = require('./auth.json');
 
 var ttsCtrl = require('./ttsCtrl.js');
-var Dequeue = require('dequeue')
+//var Dequeue = require('dequeue')
 
-var playList = new Dequeue();
+var playList = [];//= new Dequeue();
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
@@ -35,8 +35,8 @@ var currentVoiceConnection;
 var defaultVoiceChannel;
 var currentPlayDispatcher;
 var youtubeDispatcher;
-var voiceVolume = 1.0;
-var youtubeVolume = 0.1;
+var voiceVolume = 0.8;
+var youtubeVolume = 0.04;
 var offTTS = false;
 var voiceChannelID = auth.voiceChannelID;
 // var connectVoice;
@@ -53,7 +53,7 @@ client.on('ready', () => {
 	
 	channel.join().then( function( connection ) {  connectVoice = connection; logger.info('Connected! voice channel.') } ).catch(error);
 	
-	setInterval(playMusic, 3000);
+	setInterval(playMusic, 5000);
 });
 
 var ttsEnd = true;
@@ -65,7 +65,9 @@ const playMusic = function() {
 		// logger.info( 'playList.empty() is false' );
 		if( youTubeEnd && ttsEnd ) {
 		
-			var music = playList.pop();
+			logger.info( 'playList.length : ' + playList.length );
+			var music = playList.shift();//pop();
+			logger.info( 'playList.length : ' + playList.length );
 
 			logger.info( 'music url : ' + music.url );
 			logger.info( 'music comment : ' + music.comment );
@@ -75,9 +77,9 @@ const playMusic = function() {
 					
 				if( music.comment.length > 1 )	{
 					ttsEnd = false;
+					youTubeEnd = false;
 					sendTTS( music.comment, function() {
 						if( ttsEnd == false ) {
-							youTubeEnd = false;
 							playYoutube( music.url, function() {
 								if( youTubeEnd == false ) {
 									youTubeEnd = true;
