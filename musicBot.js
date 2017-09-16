@@ -240,7 +240,7 @@ client.on('message', message => {
 					var comment = input.join(' ');
 					
 					if( url.length < 5) {
-						message.reply( '명령어가 잘못 입력 되었습니다. 명령어와 유튜브 주소 사이에 공백이 2개 인지 확인하세요.);
+						message.reply('명령어가 잘못 입력 되었습니다. 명령어와 유튜브 주소 사이에 공백이 2개 인지 확인하세요.');
 						break;
 					}
 						
