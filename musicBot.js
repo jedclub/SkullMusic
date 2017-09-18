@@ -121,7 +121,17 @@ const playYoutube = function( youTubeURL, endCallBack ) {
 		// Play streams using ytdl-core
 		const ytdl = require('ytdl-core');
 		ytdl.getInfo(youTubeURL, function(error, info) { 
-			logger.info('playYoutube > youtube info : ' + JSON.stringify(info) );
+			var length = ( info.length_seconds / 60 );
+			var thumbnail = info.thumbnail_url;
+			var title = info.title;
+			
+			logger.info('playYoutube > youtube info length = ' + length.toString());
+			logger.info('playYoutube > youtube info thumbnail = ' + thumbnail);
+			logger.info('playYoutube > youtube info title = ' + title);
+			
+			// show_content_thumbnail
+			
+			// logger.info('playYoutube > youtube info : ' + JSON.stringify(info) );
 		});
 		const streamOptions = { seek: 0, volume: youtubeVolume }; 
 		defaultVoiceChannel.join()
