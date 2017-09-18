@@ -2,6 +2,7 @@ const Discord = require("discord.js");
 const request = require("superagent");
 const logger = require('winston');
 const validUrl = require('valid-url');
+const ytdl = require('ytdl-core');
 const auth = require('./auth.json');
 
 const ttsCtrl = require('./ttsCtrl.js');
@@ -66,19 +67,23 @@ var currentPlayMusic;
 const playMusic = function() {
 	
 	if( playList.length != 0 ) {
-		// logger.info( 'playList.empty() is false' );
 		if( youTubeEnd && ttsEnd ) {
 		
 			var music = playList.shift();//pop();
+			
 			currentPlayMusic = music;
+			
 			logger.info( 'playMusic > playList.length : ' + playList.length );
 
-			logger.info( 'playMusic > music url : ' + music.url );
-			logger.info( 'playMusic > music comment : ' + music.comment );
-
 			if( music ) {
-				music.user.sendMessage(music.user.username + '님 께서 신청하신 신청 곡이 연주 됩니다.');
+				music.user.sendMessage(music.user.username + '님 께서 신청한 ' + music.title +' 연주 됩니다.');
 				logger.info( 'playMusic > user name : ' + music.user.username );
+				logger.info( 'playMusic > music url : ' + music.url );
+				logger.info( 'playMusic > music comment : ' + music.comment );
+			
+				logger.info('playMusic > youtube info length = ' + music.length.toString());
+				logger.info('playMusic > youtube info thumbnail = ' + music.thumbnail);
+				logger.info('playMusic > youtube info title = ' + music.title);
 
 				if( music.comment.length > 1 )	{
 					ttsEnd = false;
@@ -119,20 +124,6 @@ const playYoutube = function( youTubeURL, endCallBack ) {
 		}
 		
 		// Play streams using ytdl-core
-		const ytdl = require('ytdl-core');
-		ytdl.getInfo(youTubeURL, function(error, info) { 
-			var length = ( info.length_seconds / 60 );
-			var thumbnail = info.thumbnail_url;
-			var title = info.title;
-			
-			logger.info('playYoutube > youtube info length = ' + length.toString());
-			logger.info('playYoutube > youtube info thumbnail = ' + thumbnail);
-			logger.info('playYoutube > youtube info title = ' + title);
-			
-			// show_content_thumbnail
-			
-			// logger.info('playYoutube > youtube info : ' + JSON.stringify(info) );
-		});
 		const streamOptions = { seek: 0, volume: youtubeVolume }; 
 		defaultVoiceChannel.join()
 		.then( connection => {
@@ -313,11 +304,29 @@ client.on('message', message => {
 							break;
 						}
 						
-						var musicObj = { url : url, comment : comment, user : message.author };
-
-						playList.push( musicObj );
+						ytdl.getInfo(youTubeURL, function(error, info) { 
 						
-						message.reply( playList.length + '번 째로 음악이 신청 되었습니다.');
+							if( error ){ 
+								message.reply('잘못된 youTube URL 입니다.');
+							} else {
+							
+								var length = ( info.length_seconds / 60 );
+								var thumbnail = info.thumbnail_url;
+								var title = info.title;
+								
+								var musicObj = { url : url, comment : comment, user : message.author, length : length, thumbnail : thumbnail, title : title };
+								
+								playList.push( musicObj );
+							
+								if( playList.length == 1 && youTubeEnd == true && ttsEnd == true ){
+									message.reply( '음악이 신청 되었습니다.' );
+								} else {
+									message.reply( '음악이 신청(예약) 되었습니다. 신청한 음악이 재생 되기 까지 ' + playList.length + '번(대기) 남았습니다.');
+								}
+							}
+						});
+							
+						
 					}
 					break;
 					
@@ -333,6 +342,44 @@ client.on('message', message => {
 					//message.reply('볼륨 값은 1~0 까지 소숫 점을 이용하여 조절 가능. 다음과 같이 입력. 보통 0.1 ~ 0.03 사이 값을 추천.');
 					//message.reply('!vol 0.1');
 					
+					break;
+				case 'now' : 
+				
+					if( !checkDM(message) ){ logger.info( 'not dm' ); break; }
+				//	if( currentPlayMusic ) {
+						const embed = new Discord.RichEmbed()
+						  .setTitle("This is your title, it can hold 256 characters")
+						  .setAuthor("Author Name", "https://i.imgur.com/lm8s41J.png")
+						  /*
+						   * Alternatively, use "#00AE86", [0, 174, 134] or an integer number.
+						   */
+						  .setColor(0x00AE86)
+						  .setDescription("This is the main body of text, it can hold 2048 characters.")
+						  .setFooter("This is the footer text, it can hold 2048 characters", "http://i.imgur.com/w1vhFSR.png")
+						  .setImage("http://i.imgur.com/yVpymuV.png")
+						  .setThumbnail("http://i.imgur.com/p2qNFag.png")
+						  /*
+						   * Takes a Date object, defaults to current date.
+						   */
+						  .setTimestamp()
+						  .setURL("https://discord.js.org/#/docs/main/indev/class/RichEmbed")
+						  .addField("This is a field title, it can hold 256 characters",
+							"This is a field value, it can hold 2048 characters.")
+						  /*
+						   * Inline fields may not display as inline if the thumbnail and/or image is too big.
+						   */
+						  .addField("Inline Field", "They can also be inline.", true)
+						  /*
+						   * Blank field, useful to create some space.
+						   */
+						  .addBlankField(true)
+						  .addField("Inline Field 3", "You can have a maximum of 25 fields.", true);
+
+						  message.author.send.send({embed});
+  
+						//message.author.send
+				//	}
+						
 					break;
 					
 				case 'next' :	// 다음 음악으로 스킵 
