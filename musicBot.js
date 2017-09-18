@@ -87,7 +87,7 @@ const playMusic = function() {
 				logger.info( 'playMusic > youtube info length = ' + music.length.toString());
 				logger.info( 'playMusic > youtube info thumbnail = ' + music.thumbnail );
 				logger.info( 'playMusic > youtube info title = ' + music.title );
-        
+
 				if( music.comment.length > 1 )	{
 					ttsEnd = false;
 					youTubeEnd = false;
@@ -315,7 +315,7 @@ client.on('message', message => {
 							break;
 						}
 
-						ytdl.getInfo(youTubeURL, function(error, info) {
+						ytdl.getInfo(url, function(error, info) {
 
 							if( error ){
 								message.reply('잘못된 youTube URL 입니다.');
