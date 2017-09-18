@@ -323,6 +323,12 @@ client.on('message', message => {
 								var thumbnail = info.thumbnail_url;
 								var title = info.title;
 
+                if( length >= 7 ) {
+                  message.reply( '신청하신 음악은 ' + length.toString() + '분 입니다.' );
+                  message.reply( '7분 이하의 곡만 신청이 가능 합니다.' );
+                  return;
+                }
+
 								var musicObj = { url : url, comment : comment, user : message.author, length : length, thumbnail : thumbnail, title : title };
 
 								playList.push( musicObj );
