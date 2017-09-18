@@ -285,7 +285,7 @@ client.on('message', message => {
 						logger.info( 'add youtube URL : ' + url );
 						logger.info( 'add comment : ' + comment );
 						
-						if( validUrl.isUri(url) ) {
+						if( !validUrl.isUri(url) ) {
 							message.reply('명령어가 잘못 입력 되었습니다. ');
 							message.reply('잘못 된 유튜브 경로이거나, 명령어와 유튜브 주소 사이에 추가 공백이 있는지 확인하세요.');
 							
