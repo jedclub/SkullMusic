@@ -143,50 +143,57 @@ const playYoutube = function( youTubeURL, endCallBack ) {
 				logger.info('youtubeDispatcher speaking : ' + youTubeURL );
 			});
 			
-		}).catch(error);
+		}).catch(function(e){ error(e); endCallBack(); });
+	} else {
+		endCallBack();
 	}
 }
 
 const sendTTS = function(ttsMsg, endCallBack ) {
 	
 	if (defaultVoiceChannel && ttsMsg.length >= 1) {
-		logger.info('TTS Say : ' + ttsMsg);
+		logger.info('sendTTS > TTS Say : ' + ttsMsg);
 		
 		if( defaultVoiceChannel )	{
+			logger.info('sendTTS > defaultVoiceChannel.leave');
 			defaultVoiceChannel.leave();
 		}
 				
 		defaultVoiceChannel.join().then( connection => {
+			logger.info('sendTTS > join');
 			currentVoiceConnection = connection;
 			ttsCtrl.loadTTS(ttsMsg, function(mp3FileName) { 
-			logger.info('play mp3');
+			logger.info('sendTTS > play mp3 = ' + mp3FileName);
 			const streamOptions = { seek: 0, volume: voiceVolume };
 			const dispatcher = connection.playFile(mp3FileName, streamOptions);
 			currentPlayDispatcher = dispatcher;
 			currentPlayDispatcher.setVolume(voiceVolume);
 			
 			dispatcher.on('end', function() {
-				logger.info('play end');
+				logger.info('sendTTS > play end');
 				endCallBack();
 			});
 			
 			dispatcher.on('error', function() {
-				logger.info('play error');
+				logger.info('sendTTS > play error');
 				endCallBack();
 			});
 			
 			dispatcher.on('speaking', function() {
-				logger.info('play speaking');
+				logger.info('sendTTS > play speaking');
 			});
 			
 			dispatcher.on('volumeChange', function(oldVol,newVol) {
-				logger.info('voice volumeChange : ' + oldVol + ' / ' + newVol );
+				logger.info('sendTTS > voice volumeChange : old = ' + oldVol + ' / new = ' + newVol );
 			});
 			
 			
 			}) 
-		}).catch(error);
+		}).catch(function(e){ error(e); endCallBack(); });
+	} else {
+		endCallBack();
 	}
+		
 }
 
 client.on('message', message => {
