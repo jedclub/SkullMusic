@@ -398,7 +398,7 @@ client.on('message', message => {
 						  .addField("Inline Field", "They can also be inline.", true)
 
 						   */
-               .addField('음원 시간 : ' + currentPlayMusic.length.toFixed(2).toString(), true);
+               .addField('음원 시간 : ' + currentPlayMusic.length.toFixed(2).toString(), true)
                .addBlankField(true);
               /*
 						  .addField("Inline Field 3", "You can have a maximum of 25 fields.", true);
