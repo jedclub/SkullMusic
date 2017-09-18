@@ -1,6 +1,7 @@
 var Discord = require("discord.js");
 var request = require("superagent");
 var logger = require('winston');
+var validUrl = require('valid-url');
 var auth = require('./auth.json');
 
 var ttsCtrl = require('./ttsCtrl.js');
@@ -19,7 +20,7 @@ logger.level = 'debug';
 var client = new Discord.Client();
 
 // Debug and warning handlers, these log debug messages and warnings to console
-client.on("debug", (m) => console.log("[debug]", m));
+//client.on("debug", (m) => console.log("[debug]", m));
 client.on("warn", (m) => console.log("[warn]", m));
 
 // exception process
@@ -58,6 +59,7 @@ client.on('ready', () => {
 
 var ttsEnd = true;
 var youTubeEnd = true;
+var currentPlayMusic;
 
 const playMusic = function() {
 	
@@ -65,13 +67,13 @@ const playMusic = function() {
 		// logger.info( 'playList.empty() is false' );
 		if( youTubeEnd && ttsEnd ) {
 		
-			logger.info( 'playList.length : ' + playList.length );
 			var music = playList.shift();//pop();
+			currentPlayMusic = music;
 			logger.info( 'playList.length : ' + playList.length );
 
 			logger.info( 'music url : ' + music.url );
 			logger.info( 'music comment : ' + music.comment );
-				
+
 			if( music ) {
 				music.user.sendMessage(music.user.username + '님 께서 신청하신 신청 곡이 연주 됩니다.');
 					
@@ -132,6 +134,11 @@ const playYoutube = function( youTubeURL, endCallBack ) {
 				logger.info('youtube volumeChange : ' + oldVol + ' / ' + newVol );
 			});	
 			
+			dispatcher.on('error', function() {
+				logger.info('play error');
+				endCallBack();
+			});
+			
 			youtubeDispatcher.on('speaking', function() {
 				logger.info('youtubeDispatcher speaking : ' + youTubeURL );
 			});
@@ -165,6 +172,7 @@ const sendTTS = function(ttsMsg, endCallBack ) {
 			
 			dispatcher.on('error', function() {
 				logger.info('play error');
+				endCallBack();
 			});
 			
 			dispatcher.on('speaking', function() {
@@ -185,103 +193,142 @@ client.on('message', message => {
 	 
 	var msg = message.content;
 	
+	
+	
 	if (msg.substring(0, 1) == '!') {
         var args = msg.substring(1).split(' ');
         var cmd = args[0];
         var text = msg.substring(1).replace(cmd + ' ','');
         
-	   
         args = args.splice(1);
 		
 		logger.info('cmd : '  + cmd );
-		 
-		switch(cmd) {
-            // !ping
-            case 'ping':
-                
-				message.reply('pong > ' + text);
-				
-                break;
-            case 'reg':
-				break;
-			case 'say' :
-				//sendTTS(text);
-				break;
-			case 'cc' : 
-				
-				if( voiceChannelID == auth.voiceChannelID )	{
-					voiceChannelID = auth.voiceChannelID2;
-				}
-				else if( voiceChannelID == auth.voiceChannelID2 )	{
-					voiceChannelID = auth.voiceChannelID;
-				}
-				
-				client.destroy();
-				client = new Discord.Client();
-				client.login(auth.token);
-				
-				client.setTimeout(function(msg) {
-					msg.reply( 'change ok > ' + defaultVoiceChannel.name );
-				}, 3000, message);
+		
+		const checkDM = function(msgInfo) {
+			if( msgInfo.channel.type != 'dm' ) {
+				msgInfo.author.send('[Bot] Dj유미의 기능은 모두 개인 메세지로만 실행이 가능합니다.');
+				msgInfo.author.send('자세한 사용방법은 !help 명령을 이용해 보세요.');
+				return false;
+			}
+			return true;
+		}
+		
+		const checkAdmin = function(msgInfo) {
+			
+		}
 
-				break;
-			case 'ttsVol' : 
-				voiceVolume = parseFloat(text);
-				message.reply('volume > ' + voiceVolume);
-				break;
-				
-			case 'add' : 
-			
-				if( client.user.id != message.author.id ) {
-			
-					var input = text.split(' ');
-					var url = input[0];
-					input.splice(0, 1);
-					var comment = input.join(' ');
+		if( cmd.length > 1 ){
+		 
+			switch( cmd ) {
+				// !ping
+				case 'ping':
 					
-					if( url.length < 5) {
-						message.reply('명령어가 잘못 입력 되었습니다. 명령어와 유튜브 주소 사이에 공백이 2개 인지 확인하세요.');
-						break;
-					}
+					message.reply('pong > ' + text);
+					
+					break;
+					
+				case 'reg':
+					break;
+					
+				case 'say' :
+					//sendTTS(text);
+					break;
+					
+				case 'cc' :  // 채널 전환 명령
+					
+					if( message.channel.type == 'dm' ){
+					
+						if( voiceChannelID == auth.voiceChannelID )	{
+							voiceChannelID = auth.voiceChannelID2;
+						}
+						else if( voiceChannelID == auth.voiceChannelID2 )	{
+							voiceChannelID = auth.voiceChannelID;
+						}
 						
+						joinVoiceChannel(voiceChannelID);
 					
-					//message.reply('url > ' + url);
-					//message.reply('comment > ' + comment);
+						client.setTimeout(function(msg) {
+							msg.reply( 'change ok > ' + defaultVoiceChannel.name );
+						}, 3000, message);
+					}
+					else {
+						logger.info( 'not dm' );
+					}
+
+					break;
 					
-					//logger.info(message.id);
-					
-					var musicObj = { url : url, comment : comment, user : message.author };
-					//logger.info('musicObj : '  + musicObj.toString() );
-					playList.push( musicObj );
-					
-					message.reply( playList.length + '번 째로 음악이 신청 되었습니다.');
-				}
-				//playYoutube( url );
-				//offTTS = true;
-			// https://www.youtube.com/watch?v=ERadk2c8KPA
-				break;
-			case 'help' :
-				message.reply('[음악 신청 방법]');
-				message.reply('유튜브 URL 을 이용해서 음악 신청 가능. 다음과 같이 입력.');
-				message.reply('!add https://www.youtube.com/watch?v=mRWxGCDBRNY 감성 음악 신청 합니다.');
+				case 'ttsVol' : // TTS 볼륨 조절
 				
-				//message.reply('[볼륨 조절 방법]');
-				//message.reply('볼륨 값은 1~0 까지 소숫 점을 이용하여 조절 가능. 다음과 같이 입력. 보통 0.1 ~ 0.03 사이 값을 추천.');
-				//message.reply('!vol 0.1');
+					if( !checkDM(message) ){ break; }
+					
+					voiceVolume = parseFloat(text);
+					message.reply('volume > ' + voiceVolume);
+					break;
+					
+				case 'add' : // 유튜브 음악 추가 
 				
-				break;
-			case 'next' :
-				if( youtubeDispatcher ) {
-					youtubeDispatcher.end();
-				}
-				break;
-			case 'vol' :
-				youtubeVolume = parseFloat(text);
-				if( youtubeDispatcher ) {
-					youtubeDispatcher.setVolume(youtubeVolume);
-					message.reply('volume > ' + youtubeVolume);
-				}
-				break;
+					if( !checkDM(message) ){ logger.info( 'not dm' ); break; }
+					if( client.user.id != message.author.id ) {
+				
+						var input = text.split(' ');
+						var url = input[0];
+						input.splice(0, 1);
+						var comment = input.join(' ');
+						
+						logger.info( 'add youtube URL : ' + url );
+						logger.info( 'add comment : ' + comment );
+						
+						if( validUrl.isUri(url) ) {
+							message.reply('명령어가 잘못 입력 되었습니다. ');
+							message.reply('잘못 된 유튜브 경로이거나, 명령어와 유튜브 주소 사이에 추가 공백이 있는지 확인하세요.');
+							
+							break;
+						}
+						
+						var musicObj = { url : url, comment : comment, user : message.author };
+
+						playList.push( musicObj );
+						
+						message.reply( playList.length + '번 째로 음악이 신청 되었습니다.');
+					}
+					break;
+					
+				case 'help' :	// 명령어 사용 방법 출력 
+				
+					if( message.channel.type == 'dm' ){
+					
+						message.reply('[음악 신청 방법]');
+						message.reply('유튜브 URL 을 이용해서 음악 신청 가능. 다음과 같이 입력.');
+						message.reply('!add https://www.youtube.com/watch?v=mRWxGCDBRNY 감성 음악 신청 합니다.');
+					}
+					//message.reply('[볼륨 조절 방법]');
+					//message.reply('볼륨 값은 1~0 까지 소숫 점을 이용하여 조절 가능. 다음과 같이 입력. 보통 0.1 ~ 0.03 사이 값을 추천.');
+					//message.reply('!vol 0.1');
+					
+					break;
+					
+				case 'next' :	// 다음 음악으로 스킵 
+				
+					if( !checkDM(message) ){ break; }
+					
+					youTubeEnd = true;
+					ttsEnd = true;
+					
+					if( youtubeDispatcher ) {
+						youtubeDispatcher.end();
+					}
+					
+					break;
+				case 'vol' :
+					if( !checkDM(message) ){ break; }
+					
+					youtubeVolume = parseFloat(text);
+					if( youtubeDispatcher ) {
+						youtubeDispatcher.setVolume(youtubeVolume);
+						message.reply('volume > ' + youtubeVolume);
+					}
+					break;
+			}
 		}
 	}
 });
