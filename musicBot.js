@@ -323,7 +323,7 @@ client.on('message', message => {
 								var thumbnail = info.thumbnail_url;
 								var title = info.title;
 
-                if( length >= 7 ) {
+                if( length >= 7 && !checkAdmin(message) ) {
                   message.reply( '신청하신 음악은 ' + length.toFixed(2).toString() + '분 입니다.' );
                   message.reply( '7분 이하의 곡만 신청이 가능 합니다.' );
                   return;
