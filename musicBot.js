@@ -271,22 +271,25 @@ client.on('message', message => {
 
 					if( message.channel.type == 'dm' ){
 
-						if( voiceChannelID == auth.voiceChannelID )	{
-							voiceChannelID = auth.voiceChannelID2;
-						}
-						else if( voiceChannelID == auth.voiceChannelID2 )	{
-							voiceChannelID = auth.voiceChannelID;
-						}
+            if( checkAdmin(message) ){
+  						if( voiceChannelID == auth.voiceChannelID )	{
+  							voiceChannelID = auth.voiceChannelID2;
+  						}
+  						else if( voiceChannelID == auth.voiceChannelID2 )	{
+  							voiceChannelID = auth.voiceChannelID;
+  						}
 
-						joinVoiceChannel(voiceChannelID);
+  						joinVoiceChannel(voiceChannelID);
 
-						client.setTimeout(function(msg) {
-							msg.reply( 'change ok > ' + defaultVoiceChannel.name );
-						}, 3000, message);
+  						client.setTimeout(function(msg) {
+  							msg.reply( 'change ok > ' + defaultVoiceChannel.name );
+  						}, 3000, message);
+            }
 					}
 					else {
 						logger.info( 'not dm' );
 					}
+
 
 					break;
 
