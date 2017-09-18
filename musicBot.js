@@ -81,9 +81,9 @@ const playMusic = function() {
 				logger.info( 'playMusic > music url : ' + music.url );
 				logger.info( 'playMusic > music comment : ' + music.comment );
 
-				logger.info('playMusic > youtube info length = ' + music.length.toString());
-				logger.info('playMusic > youtube info thumbnail = ' + music.thumbnail);
-				logger.info('playMusic > youtube info title = ' + music.title);
+				logger.info( 'playMusic > youtube info length = ' + music.length.toString());
+				logger.info( 'playMusic > youtube info thumbnail = ' + music.thumbnail );
+				logger.info( 'playMusic > youtube info title = ' + music.title );
 
 				if( music.comment.length > 1 )	{
 					ttsEnd = false;
@@ -232,8 +232,17 @@ client.on('message', message => {
 			return true;
 		}
 
-		const checkAdmin = function(msgInfo) {
+    const checkPlayMe = function(msgInfo) {
+      if( currentPlayMusic ) {
+        if( msgInfo.author.id == currentPlayMusic.user.id ) {
+          return true;
+        }
+      }
+      return false;
+    }
 
+    const checkAdmin = function(msgInfo) {
+      return false;
 		}
 
 		if( cmd.length > 1 ){
@@ -337,6 +346,7 @@ client.on('message', message => {
 						message.reply('[음악 신청 방법]');
 						message.reply('유튜브 URL 을 이용해서 음악 신청 가능. 다음과 같이 입력.');
 						message.reply('!add https://www.youtube.com/watch?v=mRWxGCDBRNY 감성 음악 신청 합니다.');
+            // message.reply(' ');
 					}
 					//message.reply('[볼륨 조절 방법]');
 					//message.reply('볼륨 값은 1~0 까지 소숫 점을 이용하여 조절 가능. 다음과 같이 입력. 보통 0.1 ~ 0.03 사이 값을 추천.');
@@ -346,13 +356,14 @@ client.on('message', message => {
 				case 'now' :
 
 					if( !checkDM(message) ){ logger.info( 'not dm' ); break; }
-				//	if( currentPlayMusic ) {
+					if( currentPlayMusic ) {
 						const embed = new Discord.RichEmbed()
-						  .setTitle("This is your title, it can hold 256 characters")
-						  .setAuthor("Author Name", "https://i.imgur.com/lm8s41J.png")
+						  .setAuthor("다음 곡이 재생 중입니다.", "http://www.freeiconspng.com/uploads/youtube-subscribe-png-28.png")
+              .setTitle(currentPlayMusic.title)
 						  /*
 						   * Alternatively, use "#00AE86", [0, 174, 134] or an integer number.
-						   */
+
+              /*
 						  .setColor(0x00AE86)
 						  .setDescription("This is the main body of text, it can hold 2048 characters.")
 						  .setFooter("This is the footer text, it can hold 2048 characters", "http://i.imgur.com/w1vhFSR.png")
@@ -361,47 +372,71 @@ client.on('message', message => {
 						  /*
 						   * Takes a Date object, defaults to current date.
 						   */
+              .setThumbnail(currentPlayMusic.thumbnail)
 						  .setTimestamp()
-						  .setURL("https://discord.js.org/#/docs/main/indev/class/RichEmbed")
+						  .setURL(currentPlayMusic.url)
+              /*
 						  .addField("This is a field title, it can hold 256 characters",
 							"This is a field value, it can hold 2048 characters.")
-						  /*
-						   * Inline fields may not display as inline if the thumbnail and/or image is too big.
-						   */
+
 						  .addField("Inline Field", "They can also be inline.", true)
-						  /*
-						   * Blank field, useful to create some space.
+
 						   */
-						  .addBlankField(true)
+						  .addBlankField(true);
+              /*
 						  .addField("Inline Field 3", "You can have a maximum of 25 fields.", true);
+              */
 
 						  message.author.send.send({embed});
 
 						//message.author.send
-				//	}
+					}
 
 					break;
 
 				case 'next' :	// 다음 음악으로 스킵
 
 					if( !checkDM(message) ){ break; }
+          if( checkPlayMe(message) || checkAdmin(message) ){
+            youTubeEnd = true;
+  					ttsEnd = true;
 
-					youTubeEnd = true;
-					ttsEnd = true;
-
-					if( youtubeDispatcher ) {
-						youtubeDispatcher.end();
-					}
-
+  					if( youtubeDispatcher ) {
+  						youtubeDispatcher.end();
+  					}
+          }
+          
 					break;
-				case 'vol' :
-					if( !checkDM(message) ){ break; }
 
-					youtubeVolume = parseFloat(text);
-					if( youtubeDispatcher ) {
-						youtubeDispatcher.setVolume(youtubeVolume);
-						message.reply('volume > ' + youtubeVolume);
-					}
+				case 'vol' :  // 볼륨 조절
+            var vol = parseFloat(text);
+
+            if( vol > 1 || vol < 0 ) {
+              message.reply('볼륨 값 1 부터 0사이의 값을 입력 하세요.');
+              message.reply('예) !vol 0.5');
+              break;
+            }
+
+            if( vol > 0.2 ){
+              vol = vol * 0.2;
+            }
+
+            if( !checkDM(message) ){ break; }
+            if( checkPlayMe(message) ){
+
+              if( youtubeDispatcher ) {
+                youtubeDispatcher.setVolume( vol );
+                message.reply( '볼륨이 변경 되었습니다.' );
+    					}
+            } else if ( checkAdmin(message) ) {
+              youtubeVolume = vol;
+
+              if( youtubeDispatcher ) {
+                youtubeDispatcher.setVolume( youtubeVolume );
+                message.reply( '볼륨이 변경 되었습니다.' );
+    					}
+            }
+
 					break;
 			}
 		}
