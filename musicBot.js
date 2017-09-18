@@ -214,8 +214,6 @@ client.on('message', message => {
 
 	var msg = message.content;
 
-
-
 	if (msg.substring(0, 1) == '!') {
         var args = msg.substring(1).split(' ');
         var cmd = args[0];
@@ -244,7 +242,7 @@ client.on('message', message => {
     }
 
     const checkAdmin = function(msgInfo) {
-      return false;
+      return auth.adminID.find( function(ids) { return ( ids == msgInfo.author.id ); });
 		}
 
 		if( cmd.length > 1 ){
