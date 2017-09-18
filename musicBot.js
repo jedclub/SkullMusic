@@ -48,7 +48,14 @@ client.on('ready', () => {
 	logger.info('client ready event > my id : ' + client.user.id.toString());
 	logger.info('client ready event > my name : ' + client.user.username.toString());
 
-	var channel = client.channels.get( voiceChannelID );
+	joinVoiceChannel(voiceChannelID);
+
+	setInterval(playMusic, 5000);
+});
+
+const joinVoiceChannel = function(vID) {
+
+	var channel = client.channels.get( vID );
 	defaultVoiceChannel = channel;
 
 	if (channel instanceof Discord.VoiceChannel) {
@@ -56,9 +63,7 @@ client.on('ready', () => {
 	}
 
 	channel.join().then( function( connection ) {  connectVoice = connection; logger.info('Connected! voice channel.') } ).catch(error);
-
-	setInterval(playMusic, 5000);
-});
+}
 
 var ttsEnd = true;
 var youTubeEnd = true;
