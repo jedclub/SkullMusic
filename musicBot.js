@@ -356,6 +356,7 @@ client.on('message', message => {
             .addField('[볼륨 조절]', '플레이되고 있는 음악의 보륨을 조절 1 ~ 0 사이의 소수 값을 입력. (내가 신청한 음악만 조절 가능) \n!vol 0.5', true)
             message.author.send({embed});
 					}
+
 					//message.reply('[볼륨 조절 방법]');
 					//message.reply('볼륨 값은 1~0 까지 소숫 점을 이용하여 조절 가능. 다음과 같이 입력. 보통 0.1 ~ 0.03 사이 값을 추천.');
 					//message.reply('!vol 0.1');
@@ -426,7 +427,7 @@ client.on('message', message => {
               break;
             }
 
-            vol = vol * 0.2;
+            vol = vol * 0.15;
 
             if( !checkDM(message) ){ break; }
             if( checkPlayMe(message) ){
