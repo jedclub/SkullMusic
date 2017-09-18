@@ -134,7 +134,7 @@ const playYoutube = function( youTubeURL, endCallBack ) {
 				logger.info('youtube volumeChange : ' + oldVol + ' / ' + newVol );
 			});	
 			
-			dispatcher.on('error', function() {
+			youtubeDispatcher.on('error', function() {
 				logger.info('play error');
 				endCallBack();
 			});
