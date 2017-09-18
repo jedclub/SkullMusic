@@ -324,7 +324,7 @@ client.on('message', message => {
 								var title = info.title;
 
                 if( length >= 7 ) {
-                  message.reply( '신청하신 음악은 ' + length.toString() + '분 입니다.' );
+                  message.reply( '신청하신 음악은 ' + length.toFixed(2).toString() + '분 입니다.' );
                   message.reply( '7분 이하의 곡만 신청이 가능 합니다.' );
                   return;
                 }
@@ -340,8 +340,6 @@ client.on('message', message => {
 								}
 							}
 						});
-
-
 					}
 					break;
 
@@ -349,10 +347,22 @@ client.on('message', message => {
 
 					if( message.channel.type == 'dm' ){
 
-						message.reply('[음악 신청 방법]');
-						message.reply('유튜브 URL 을 이용해서 음악 신청 가능. 다음과 같이 입력.');
-						message.reply('!add https://www.youtube.com/watch?v=mRWxGCDBRNY 감성 음악 신청 합니다.');
-            // message.reply(' ');
+            const embed = new Discord.RichEmbed()
+            .setAuthor('DJ 유미 사용 방법!')
+            .addBlankField(true)
+            .addField('[음악 신청 방법]', '유튜브 URL 을 이용해서 음악 신청 가능. 다음과 같이 입력.', true)
+            .setDescription('!add https://www.youtube.com/watch?v=mRWxGCDBRNY 감성 음악 신청 합니다.')
+            .addBlankField(true)
+            .addField('[현재 플레이 음악 정보 확인]', '지금 플레이 되는 음원 정보를 다음과 같이 입력.', true)
+            .setDescription('!now')
+            .addBlankField(true)
+            .addField('[다음 음악으로 전환]', '플레이되고 있는 음악을 중단하고 다음 대기열 음악을 재생. (내가 신청한 음악만 중단 가능)', true)
+            .setDescription('!next')
+            .addBlankField(true)
+            .addField('[볼륨 조절]', '플레이되고 있는 음악의 보륨을 조절 1 ~ 0 사이의 소수 값을 입력. (내가 신청한 음악만 조절 가능)', true)
+            .setDescription('!vol 0.5')
+            .addBlankField(true);
+            message.author.send({embed});
 					}
 					//message.reply('[볼륨 조절 방법]');
 					//message.reply('볼륨 값은 1~0 까지 소숫 점을 이용하여 조절 가능. 다음과 같이 입력. 보통 0.1 ~ 0.03 사이 값을 추천.');
@@ -388,7 +398,8 @@ client.on('message', message => {
 						  .addField("Inline Field", "They can also be inline.", true)
 
 						   */
-						  .addBlankField(true);
+               .addField('음원 시간 : ' + currentPlayMusic.length.toFixed(2).toString(), true);
+               .addBlankField(true);
               /*
 						  .addField("Inline Field 3", "You can have a maximum of 25 fields.", true);
               */
@@ -423,9 +434,7 @@ client.on('message', message => {
               break;
             }
 
-            if( vol > 0.2 ){
-              vol = vol * 0.2;
-            }
+            vol = vol * 0.2;
 
             if( !checkDM(message) ){ break; }
             if( checkPlayMe(message) ){
