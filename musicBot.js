@@ -1,13 +1,13 @@
-var Discord = require("discord.js");
-var request = require("superagent");
-var logger = require('winston');
-var validUrl = require('valid-url');
-var auth = require('./auth.json');
+const Discord = require("discord.js");
+const request = require("superagent");
+const logger = require('winston');
+const validUrl = require('valid-url');
+const auth = require('./auth.json');
 
-var ttsCtrl = require('./ttsCtrl.js');
+const ttsCtrl = require('./ttsCtrl.js');
 //var Dequeue = require('dequeue')
 
-var playList = [];//= new Dequeue();
+const playList = [];//= new Dequeue();
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
@@ -17,7 +17,7 @@ logger.add(logger.transports.Console, {
 logger.level = 'debug';
 
 // discord client
-var client = new Discord.Client();
+const client = new Discord.Client();
 
 // Debug and warning handlers, these log debug messages and warnings to console
 //client.on("debug", (m) => console.log("[debug]", m));
@@ -120,6 +120,9 @@ const playYoutube = function( youTubeURL, endCallBack ) {
 		
 		// Play streams using ytdl-core
 		const ytdl = require('ytdl-core');
+		ytdl.getInfo(youTubeURL, function(info, error) { 
+			logger.info('playYoutube > youtube info : ' + JSON.stringify(info) );
+		});
 		const streamOptions = { seek: 0, volume: youtubeVolume }; 
 		defaultVoiceChannel.join()
 		.then( connection => {
