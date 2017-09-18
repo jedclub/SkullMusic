@@ -120,7 +120,7 @@ const playYoutube = function( youTubeURL, endCallBack ) {
 		
 		// Play streams using ytdl-core
 		const ytdl = require('ytdl-core');
-		ytdl.getInfo(youTubeURL, function(info, error) { 
+		ytdl.getInfo(youTubeURL, function(error, info) { 
 			logger.info('playYoutube > youtube info : ' + JSON.stringify(info) );
 		});
 		const streamOptions = { seek: 0, volume: youtubeVolume }; 
