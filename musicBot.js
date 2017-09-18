@@ -350,18 +350,10 @@ client.on('message', message => {
             const embed = new Discord.RichEmbed()
             .setAuthor('DJ 유미 사용 방법!')
             .addBlankField(true)
-            .addField('[음악 신청 방법]', '유튜브 URL 을 이용해서 음악 신청 가능. 다음과 같이 입력.', true)
-            .setDescription('!add https://www.youtube.com/watch?v=mRWxGCDBRNY 감성 음악 신청 합니다.')
-            .addBlankField(true)
-            .addField('[현재 플레이 음악 정보 확인]', '지금 플레이 되는 음원 정보를 다음과 같이 입력.', true)
-            .setDescription('!now')
-            .addBlankField(true)
-            .addField('[다음 음악으로 전환]', '플레이되고 있는 음악을 중단하고 다음 대기열 음악을 재생. (내가 신청한 음악만 중단 가능)', true)
-            .setDescription('!next')
-            .addBlankField(true)
-            .addField('[볼륨 조절]', '플레이되고 있는 음악의 보륨을 조절 1 ~ 0 사이의 소수 값을 입력. (내가 신청한 음악만 조절 가능)', true)
-            .setDescription('!vol 0.5')
-            .addBlankField(true);
+            .addField('[음악 신청 방법]', '유튜브 URL 을 이용해서 음악 신청 가능. 다음과 같이 입력. \n!add https://www.youtube.com/watch?v=mRWxGCDBRNY 감성 음악 신청 합니다.', true)
+            .addField('[현재 플레이 음악 정보 확인]', '지금 플레이 되는 음원 정보를 다음과 같이 입력. \n!now', true)
+            .addField('[다음 음악으로 전환]', '플레이되고 있는 음악을 중단하고 다음 대기열 음악을 재생. (내가 신청한 음악만 중단 가능) \n!next', true)
+            .addField('[볼륨 조절]', '플레이되고 있는 음악의 보륨을 조절 1 ~ 0 사이의 소수 값을 입력. (내가 신청한 음악만 조절 가능) \n!vol 0.5', true)
             message.author.send({embed});
 					}
 					//message.reply('[볼륨 조절 방법]');
