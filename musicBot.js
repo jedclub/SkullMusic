@@ -87,7 +87,7 @@ const playMusic = function() {
 				logger.info( 'playMusic > youtube info length = ' + music.length.toString());
 				logger.info( 'playMusic > youtube info thumbnail = ' + music.thumbnail );
 				logger.info( 'playMusic > youtube info title = ' + music.title );
-
+        
 				if( music.comment.length > 1 )	{
 					ttsEnd = false;
 					youTubeEnd = false;
