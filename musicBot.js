@@ -381,7 +381,7 @@ client.on('message', message => {
 						  /*
 						   * Takes a Date object, defaults to current date.
 						   */
-              .setThumbnail(currentPlayMusic.thumbnail)
+              .setImage(currentPlayMusic.thumbnail)
 						  .setTimestamp()
 						  .setURL(currentPlayMusic.url)
               /*
