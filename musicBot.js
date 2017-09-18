@@ -37,13 +37,15 @@ var defaultVoiceChannel;
 var currentPlayDispatcher;
 var youtubeDispatcher;
 var voiceVolume = 0.8;
-var youtubeVolume = 0.04;
+var youtubeVolume = 0.07;
 var offTTS = false;
 var voiceChannelID = auth.voiceChannelID;
 // var connectVoice;
 
 client.on('ready', () => {
-	logger.info('discord ready.');
+	logger.info('client ready event > discord ready.');
+	logger.info('client ready event > my id : ' + client.user.id.toString());
+	logger.info('client ready event > my name : ' + client.user.username.toString());
   
 	var channel = client.channels.get( voiceChannelID );
 	defaultVoiceChannel = channel; 
@@ -69,14 +71,15 @@ const playMusic = function() {
 		
 			var music = playList.shift();//pop();
 			currentPlayMusic = music;
-			logger.info( 'playList.length : ' + playList.length );
+			logger.info( 'playMusic > playList.length : ' + playList.length );
 
-			logger.info( 'music url : ' + music.url );
-			logger.info( 'music comment : ' + music.comment );
+			logger.info( 'playMusic > music url : ' + music.url );
+			logger.info( 'playMusic > music comment : ' + music.comment );
 
 			if( music ) {
 				music.user.sendMessage(music.user.username + '님 께서 신청하신 신청 곡이 연주 됩니다.');
-					
+				logger.info( 'playMusic > user name : ' + music.user.username );
+
 				if( music.comment.length > 1 )	{
 					ttsEnd = false;
 					youTubeEnd = false;
@@ -108,7 +111,7 @@ const playMusic = function() {
 
 const playYoutube = function( youTubeURL, endCallBack ) {
 	
-	logger.info('call playYoutube');
+	logger.info('playYoutube > call playYoutube');
 	if (defaultVoiceChannel && youTubeURL.length >= 1) {
 		
 		if( defaultVoiceChannel )	{
@@ -126,21 +129,26 @@ const playYoutube = function( youTubeURL, endCallBack ) {
 			youtubeDispatcher.setVolume(youtubeVolume);
 			
 			youtubeDispatcher.on('end', function() {
-					logger.info('youtubeDispatcher end');
+					logger.info('playYoutube > youtubeDispatcher end');
 					endCallBack();
 			});
 				
 			youtubeDispatcher.on('volumeChange', function(oldVol,newVol) {
-				logger.info('youtube volumeChange : ' + oldVol + ' / ' + newVol );
+				logger.info('playYoutube > youtube volumeChange : ' + oldVol + ' / ' + newVol );
 			});	
 			
 			youtubeDispatcher.on('error', function() {
-				logger.info('play error');
+				logger.info('playYoutube > play error');
 				endCallBack();
 			});
 			
 			youtubeDispatcher.on('speaking', function() {
-				logger.info('youtubeDispatcher speaking : ' + youTubeURL );
+				logger.info('playYoutube > youtubeDispatcher speaking : ' + youTubeURL );
+			});
+			
+			currentVoiceConnection.on('playYoutube > speaking', function(user, speaking) { 
+				logger.info('playYoutube > speaking = ' + user.username +  ' / say = ' + speaking.toString() ); 
+				// youtubeDispatcher.setVolume(youtubeVolume);
 			});
 			
 		}).catch(function(e){ error(e); endCallBack(); });
@@ -158,7 +166,7 @@ const sendTTS = function(ttsMsg, endCallBack ) {
 			logger.info('sendTTS > defaultVoiceChannel.leave');
 			defaultVoiceChannel.leave();
 		}
-				
+
 		defaultVoiceChannel.join().then( connection => {
 			logger.info('sendTTS > join');
 			currentVoiceConnection = connection;
