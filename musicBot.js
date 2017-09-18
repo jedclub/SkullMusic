@@ -77,6 +77,9 @@ const playMusic = function() {
 
 			if( music ) {
 				music.user.sendMessage(music.user.username + '님 께서 신청한 ' + music.title +' 연주 됩니다.');
+
+        var st_date = new Date().toISOString().substr(0, 10).replace('T', ' ');
+        logger.info( 'playMusic > play time = ' + st_date );
 				logger.info( 'playMusic > user name : ' + music.user.username );
 				logger.info( 'playMusic > music url : ' + music.url );
 				logger.info( 'playMusic > music comment : ' + music.comment );
@@ -198,7 +201,6 @@ const sendTTS = function(ttsMsg, endCallBack ) {
 			dispatcher.on('volumeChange', function(oldVol,newVol) {
 				logger.info('sendTTS > voice volumeChange : old = ' + oldVol + ' / new = ' + newVol );
 			});
-
 
 			})
 		}).catch(function(e){ error(e); endCallBack(); });
@@ -405,7 +407,7 @@ client.on('message', message => {
   						youtubeDispatcher.end();
   					}
           }
-          
+
 					break;
 
 				case 'vol' :  // 볼륨 조절
