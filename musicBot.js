@@ -140,6 +140,7 @@ const playYoutube = function( youTubeURL, endCallBack ) {
 			currentVoiceConnection = connection;
 			const stream = ytdl( youTubeURL, { filter : 'audioonly' });
 			youtubeDispatcher = connection.playStream(stream, streamOptions);
+      youtubeDispatcher.setBitrate(8);
 			youtubeDispatcher.setVolume(youtubeVolume);
 
 			youtubeDispatcher.on('end', function() {
