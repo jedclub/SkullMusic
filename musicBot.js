@@ -138,9 +138,9 @@ const playYoutube = function( youTubeURL, endCallBack ) {
 		defaultVoiceChannel.join()
 		.then( connection => {
 			currentVoiceConnection = connection;
-			const stream = ytdl( youTubeURL, { filter : 'audioonly', quality : 'lowest' });
+			const stream = ytdl( youTubeURL, { filter : 'audioonly' }); // , quality : 'lowest'
 			youtubeDispatcher = connection.playStream(stream, streamOptions);
-      youtubeDispatcher.setBitrate(22);
+      //youtubeDispatcher.setBitrate(22);
 			youtubeDispatcher.setVolume(youtubeVolume);
 
 			youtubeDispatcher.on('end', function() {
