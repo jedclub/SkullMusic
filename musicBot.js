@@ -58,7 +58,7 @@ const joinVoiceChannel = function(vID) {
 	var channel = client.channels.get( vID );
 	defaultVoiceChannel = channel;
 
-  defaultVoiceChannel.setBitrate(8);
+  //defaultVoiceChannel.setBitrate(8);
 
 	if (channel instanceof Discord.VoiceChannel) {
 		logger.info( channel.name + ' - ' + channel.id);
@@ -138,9 +138,9 @@ const playYoutube = function( youTubeURL, endCallBack ) {
 		defaultVoiceChannel.join()
 		.then( connection => {
 			currentVoiceConnection = connection;
-			const stream = ytdl( youTubeURL, { filter : 'audioonly' });
+			const stream = ytdl( youTubeURL, { filter : 'audioonly', quality : 'lowest' });
 			youtubeDispatcher = connection.playStream(stream, streamOptions);
-      youtubeDispatcher.setBitrate(8);
+      //youtubeDispatcher.setBitrate(8);
 			youtubeDispatcher.setVolume(youtubeVolume);
 
 			youtubeDispatcher.on('end', function() {
