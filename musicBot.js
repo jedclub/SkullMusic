@@ -140,7 +140,7 @@ const playYoutube = function( youTubeURL, endCallBack ) {
 			currentVoiceConnection = connection;
 			const stream = ytdl( youTubeURL, { filter : 'audioonly' }); // , quality : 'lowest'
 			youtubeDispatcher = connection.playStream(stream, streamOptions);
-      //youtubeDispatcher.setBitrate(22);
+      youtubeDispatcher.setBitrate(32);
 			youtubeDispatcher.setVolume(youtubeVolume);
 
 			youtubeDispatcher.on('end', function() {
@@ -161,10 +161,12 @@ const playYoutube = function( youTubeURL, endCallBack ) {
 				logger.info('playYoutube > youtubeDispatcher speaking : ' + youTubeURL );
 			});
 
+      /*
 			currentVoiceConnection.on('playYoutube > speaking', function(user, speaking) {
 				logger.info('playYoutube > speaking = ' + user.username +  ' / say = ' + speaking.toString() );
 				// youtubeDispatcher.setVolume(youtubeVolume);
 			});
+      */
 
 		}).catch(function(e){ error(e); endCallBack(); });
 	} else {
