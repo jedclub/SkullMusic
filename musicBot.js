@@ -58,6 +58,8 @@ const joinVoiceChannel = function(vID) {
 	var channel = client.channels.get( vID );
 	defaultVoiceChannel = channel;
 
+  defaultVoiceChannel.setBitrate(8);
+
 	if (channel instanceof Discord.VoiceChannel) {
 		logger.info( channel.name + ' - ' + channel.id);
 	}
