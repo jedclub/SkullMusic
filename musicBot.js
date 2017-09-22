@@ -138,7 +138,7 @@ const playYoutube = function( youTubeURL, endCallBack ) {
 		defaultVoiceChannel.join()
 		.then( connection => {
 			currentVoiceConnection = connection;
-			const stream = ytdl( youTubeURL, { filter : 'audioonly', quality : 'lowest' }); //
+			const stream = ytdl( youTubeURL, { filter : 'audioonly' }); // , quality : 'lowest'
 			youtubeDispatcher = connection.playStream(stream, streamOptions);
       youtubeDispatcher.setBitrate(32);
 			youtubeDispatcher.setVolume(youtubeVolume);
@@ -380,8 +380,9 @@ client.on('message', message => {
 					if( !checkDM(message) ){ logger.info( 'not dm' ); break; }
 					if( currentPlayMusic ) {
 						const embed = new Discord.RichEmbed()
-						  .setAuthor("다음 곡이 재생 중입니다.", "http://www.freeiconspng.com/uploads/youtube-subscribe-png-28.png")
+						  .setAuthor("다음 곡이 재생 중입니다.")
               .setTitle(currentPlayMusic.title)
+              .setThumbnail("http://www.freeiconspng.com/uploads/youtube-subscribe-png-28.png")
 						  /*
 						   * Alternatively, use "#00AE86", [0, 174, 134] or an integer number.
 
@@ -390,7 +391,7 @@ client.on('message', message => {
 						  .setDescription("This is the main body of text, it can hold 2048 characters.")
 						  .setFooter("This is the footer text, it can hold 2048 characters", "http://i.imgur.com/w1vhFSR.png")
 						  .setImage("http://i.imgur.com/yVpymuV.png")
-						  .setThumbnail("http://i.imgur.com/p2qNFag.png")
+
 						  /*
 						   * Takes a Date object, defaults to current date.
 						   */
