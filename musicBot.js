@@ -122,8 +122,6 @@ const playMusic = function() {
 	}
 }
 
-
-
 const playYoutube = function( youTubeURL, endCallBack ) {
 
 	logger.info('playYoutube > call playYoutube');
