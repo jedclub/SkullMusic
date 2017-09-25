@@ -377,6 +377,15 @@ client.on('message', message => {
 
 					if( !checkDM(message) ){ logger.info( 'not dm' ); break; }
 					if( currentPlayMusic ) {
+						
+						var nowPlayListCntMsg;
+						if( playList.length == 0 ) {
+					   		nowPlayListCntMsg = '현재 대기 중인 음악이 없습니다.';
+				   		}
+				   		else {
+					   		nowPlayListCntMsg = playList.length + '곡이 대기중 입니다.';
+				   		}
+						
 						const embed = new Discord.RichEmbed()
 						  .setAuthor("다음 곡이 재생 중입니다.")
               .setTitle(currentPlayMusic.title)
@@ -404,14 +413,7 @@ client.on('message', message => {
 
 						   */
                .addField('음원 시간', currentPlayMusic.length.toFixed(2).toString() + '분')
-			   .addField('다음 대기 음악', function(){
-				   if( playList.length == 0 ) {
-					   return '현재 대기 중인 음악이 없습니다.';
-				   }
-				   else {
-					   return playList.length + '곡이 대기중 입니다.';
-				   }
-			   })
+			   .addField('다음 대기 음악', nowPlayListCntMsg)
                .addBlankField(true);
               /*
 						  .addField("Inline Field 3", "You can have a maximum of 25 fields.", true);
