@@ -272,22 +272,22 @@ client.on('message', message => {
 
 				case 'cc' :  // 채널 전환 명령
 
-					if( message.channel.type == 'dm' ){
-
-            if( checkAdmin(message) ){
-  						if( voiceChannelID == auth.voiceChannelID )	{
-  							voiceChannelID = auth.voiceChannelID2;
-  						}
-  						else if( voiceChannelID == auth.voiceChannelID2 )	{
-  							voiceChannelID = auth.voiceChannelID;
-  						}
-
-  						joinVoiceChannel(voiceChannelID);
-
-  						client.setTimeout(function(msg) {
-  							msg.reply( 'change ok > ' + defaultVoiceChannel.name );
-  						}, 3000, message);
-            }
+					if( message.channel.type == 'dm' && checkAdmin(message) ){
+						if( text.length == 0 ) {	
+							if( voiceChannelID == auth.voiceChannelID )	{
+								voiceChannelID = auth.voiceChannelID2;
+							}
+							else if( voiceChannelID == auth.voiceChannelID2 ) {
+								voiceChannelID = auth.voiceChannelID;
+							}
+						}
+						else {
+							voiceChannelID = text;
+						}
+						joinVoiceChannel(voiceChannelID);
+						client.setTimeout(function(msg) {
+							msg.reply( 'change ok > ' + defaultVoiceChannel.name );
+						}, 3000, message);
 					}
 					else {
 						logger.info( 'not dm' );
