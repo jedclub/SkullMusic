@@ -293,7 +293,7 @@ client.on('message', message => {
 
 						var resultJoin = joinVoiceChannel(voiceChannelID);
             if( resultJoin == false ) {
-              msg.reply( 'change fail' );
+              message.reply( 'change fail' );
               break;
             }
 
