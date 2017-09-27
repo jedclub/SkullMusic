@@ -273,7 +273,7 @@ client.on('message', message => {
 				case 'cc' :  // 채널 전환 명령
 
 					if( message.channel.type == 'dm' && checkAdmin(message) ){
-						if( text.length == 0 ) {	
+						if( text.length == 0 ) {
 							if( voiceChannelID == auth.voiceChannelID )	{
 								voiceChannelID = auth.voiceChannelID2;
 							}
@@ -284,6 +284,9 @@ client.on('message', message => {
 						else {
 							voiceChannelID = text;
 						}
+
+            logger.info( 'cc > ' + voiceChannelID );
+
 						joinVoiceChannel(voiceChannelID);
 						client.setTimeout(function(msg) {
 							msg.reply( 'change ok > ' + defaultVoiceChannel.name );
