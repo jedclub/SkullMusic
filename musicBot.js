@@ -279,6 +279,7 @@ client.on('message', message => {
 				case 'cc' :  // 채널 전환 명령
 
 					if( message.channel.type == 'dm' && checkAdmin(message) ){
+            logger.info( 'cc text.length = ' + text.length );
 						if( text.length == 0 ) {
 							if( voiceChannelID == auth.voiceChannelID )	{
 								voiceChannelID = auth.voiceChannelID2;
