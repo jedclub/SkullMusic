@@ -56,15 +56,19 @@ client.on('ready', () => {
 const joinVoiceChannel = function(vID) {
 
 	var channel = client.channels.get( vID );
-	defaultVoiceChannel = channel;
+  if( channel ) {
+    defaultVoiceChannel = channel;
 
-  //defaultVoiceChannel.setBitrate(8);
+    //defaultVoiceChannel.setBitrate(8);
 
-	if (channel instanceof Discord.VoiceChannel) {
-		logger.info( channel.name + ' - ' + channel.id);
-	}
+  	if (channel instanceof Discord.VoiceChannel) {
+  		logger.info( channel.name + ' - ' + channel.id);
+  	}
 
-	channel.join().then( function( connection ) {  connectVoice = connection; logger.info('Connected! voice channel.') } ).catch(error);
+  	channel.join().then( function( connection ) {  connectVoice = connection; logger.info('Connected! voice channel.') } ).catch(error);
+    return true;
+  }
+	return false;
 }
 
 var ttsEnd = true;
@@ -287,7 +291,12 @@ client.on('message', message => {
 
             logger.info( 'cc > ' + voiceChannelID );
 
-						joinVoiceChannel(voiceChannelID);
+						var resultJoin = joinVoiceChannel(voiceChannelID);
+            if( resultJoin == false ) {
+              msg.reply( 'change fail' );
+              break;
+            }
+
 						client.setTimeout(function(msg) {
 							msg.reply( 'change ok > ' + defaultVoiceChannel.name );
 						}, 3000, message);
@@ -295,7 +304,6 @@ client.on('message', message => {
 					else {
 						logger.info( 'not dm' );
 					}
-
 
 					break;
 
