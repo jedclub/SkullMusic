@@ -55,6 +55,8 @@ client.on('ready', () => {
 
 const joinVoiceChannel = function(vID) {
 
+  logger.info( 'joinVoiceChannel > ' + vID );
+
 	var channel = client.channels.get( vID );
   if( channel ) {
     defaultVoiceChannel = channel;
