@@ -280,7 +280,7 @@ client.on('message', message => {
 
 					if( message.channel.type == 'dm' && checkAdmin(message) ){
             logger.info( 'cc text.length = ' + text.length );
-						if( text.length == 0 ) {
+						if( text.length < 12 ) {
 							if( voiceChannelID == auth.voiceChannelID )	{
 								voiceChannelID = auth.voiceChannelID2;
 							}
