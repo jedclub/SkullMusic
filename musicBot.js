@@ -374,7 +374,8 @@ client.on('message', message => {
 
             const embed = new Discord.RichEmbed()
             .setAuthor('DJ 유미 사용 방법!')
-            .addBlankField(true)
+            .setColor('GREEN')
+            .addBlankField(false)
             .addField('[음악 신청 방법]', '유튜브 URL 을 이용해서 음악 신청 가능. 다음과 같이 입력. \n!add https://www.youtube.com/watch?v=mRWxGCDBRNY 감성 음악 신청 합니다.', true)
             .addField('[현재 플레이 음악 정보 확인]', '지금 플레이 되는 음원 정보를 다음과 같이 입력. \n!now', true)
             .addField('[다음 음악으로 전환]', '플레이되고 있는 음악을 중단하고 다음 대기열 음악을 재생. (내가 신청한 음악만 중단 가능) \n!next', true)
