@@ -8,13 +8,14 @@ const auth = require('./auth.json');
 const ttsCtrl = require('./ttsCtrl.js');
 //var Dequeue = require('dequeue')
 
-const playList = [];//= new Dequeue();
+const logFiles = new winston.transports.File({ filename: 'log.txt' });
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, {
     colorize: true
 });
+logger.add(logFiles);
 logger.level = 'debug';
 
 // discord client
@@ -32,6 +33,8 @@ function error(e) {
 
 // login
 client.login(auth.token);
+
+const playList = [];//= new Dequeue();
 
 var currentVoiceConnection;
 var defaultVoiceChannel;
