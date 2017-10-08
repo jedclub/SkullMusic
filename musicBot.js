@@ -15,7 +15,7 @@ logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, {
     colorize: true
 });
-logger.add(logFiles);
+//logger.add(logFiles);
 logger.level = 'debug';
 
 // discord client
