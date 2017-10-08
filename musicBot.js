@@ -8,7 +8,7 @@ const auth = require('./auth.json');
 const ttsCtrl = require('./ttsCtrl.js');
 //var Dequeue = require('dequeue')
 
-const logFiles = new winston.transports.File({ filename: 'log.txt' });
+const logFiles = new logger.transports.File({ filename: 'log.txt' });
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
