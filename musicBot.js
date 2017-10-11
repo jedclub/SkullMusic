@@ -10,6 +10,10 @@ const ttsCtrl = require('./ttsCtrl.js');
 
 const logFiles = new logger.transports.File({ filename: 'log.txt' });
 
+var ttsEnd = true;
+var youTubeEnd = true;
+var currentPlayMusic;
+
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, {
@@ -53,6 +57,9 @@ client.on('ready', () => {
 
 	joinVoiceChannel(voiceChannelID);
 
+	ttsEnd = true;
+	youTubeEnd = true;
+	
 	setInterval(playMusic, 5000);
 });
 
@@ -76,9 +83,7 @@ const joinVoiceChannel = function(vID) {
 	return false;
 }
 
-var ttsEnd = true;
-var youTubeEnd = true;
-var currentPlayMusic;
+
 
 const playMusic = function() {
 
