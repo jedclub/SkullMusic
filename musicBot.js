@@ -50,6 +50,19 @@ var offTTS = false;
 var voiceChannelID = auth.voiceChannelID;
 // var connectVoice;
 
+
+// 
+client.on('disconnect', () => {
+	
+	logger.info('discord disconnect...');
+		
+	ttsList.length = 0;
+	ttsEnd = true;
+	
+	client.login(auth.token);
+});
+
+//
 client.on('ready', () => {
 	logger.info('client ready event > discord ready.');
 	logger.info('client ready event > my id : ' + client.user.id.toString());
