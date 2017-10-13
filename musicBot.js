@@ -40,6 +40,7 @@ client.login(auth.token);
 
 const playList = [];//= new Dequeue();
 
+var botName = '집사';
 var currentVoiceConnection;
 var defaultVoiceChannel;
 var currentPlayDispatcher;
@@ -260,7 +261,7 @@ client.on('message', message => {
 
 		const checkDM = function(msgInfo) {
 			if( msgInfo.channel.type != 'dm' ) {
-				msgInfo.author.send('[Bot] Dj유미의 기능은 모두 개인 메세지로만 실행이 가능합니다.');
+				msgInfo.author.send('[Bot] Dj' + botName + '의 기능은 모두 개인 메세지로만 실행이 가능합니다.');
 				msgInfo.author.send('자세한 사용방법은 !help 명령을 이용해 보세요.');
 				return false;
 			}
@@ -394,7 +395,7 @@ client.on('message', message => {
 					if( message.channel.type == 'dm' ){
 
             const embed = new Discord.RichEmbed()
-            .setAuthor('DJ 유미 사용 방법!')
+            .setAuthor('DJ ' + botName + ' 사용 방법!')
             .setColor('GREEN')
             .addBlankField(false)
             .addField('[음악 신청 방법]', '유튜브 URL 을 이용해서 음악 신청 가능. 다음과 같이 입력. \n!add https://www.youtube.com/watch?v=mRWxGCDBRNY 감성 음악 신청 합니다.', true)
