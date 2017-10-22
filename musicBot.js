@@ -49,17 +49,23 @@ var voiceVolume = 0.8;
 var youtubeVolume = 0.07;
 var offTTS = false;
 var voiceChannelID = auth.voiceChannelID;
+var mainGuild;
+var roleAdmin;
+var roleSkull;
+var roleMonkey;
+var roleWaien;
+
 // var connectVoice;
 
 
-// 
+//
 client.on('disconnect', () => {
-	
+
 	logger.info('discord disconnect...');
-		
+
 	ttsList.length = 0;
 	ttsEnd = true;
-	
+
 	client.login(auth.token);
 });
 
@@ -73,8 +79,25 @@ client.on('ready', () => {
 
 	ttsEnd = true;
 	youTubeEnd = true;
-	
+
 	setInterval(playMusic, 5000);
+
+  mainGuild = client.guilds.get(auth.mainGuild); // 서버길드
+  generalVoiceCh = client.channels.get('370289642349527063');	// 캔트성
+  roleAdmin = mainGuild.roles.get('370291422647287808');	// 간부
+  roleSkull = mainGuild.roles.get('370295517743153169');	// 해골
+  roleMonkey = mainGuild.roles.get('370929634520465419');	// 몽키
+  roleWaien = mainGuild.roles.get('370932431663923200');	// 와이엔
+
+  mainGuild.roles.array().forEach( function(role, index, array) {
+    logger.info('role : ' + role.name + ' - ' + role.id);
+  });
+
+  roleSkull.members.forEach( function(member, index, array) {
+    logger.info('member : ' + member.id + ' / ' + member.nickname + ' / ' + member.user.username);
+  });
+
+
 });
 
 const joinVoiceChannel = function(vID) {
@@ -246,6 +269,57 @@ const sendTTS = function(ttsMsg, endCallBack ) {
 
 }
 
+// 개인 메세지 검사
+const checkDM = function(msgInfo) {
+  if( msgInfo.channel.type != 'dm' ) {
+    msgInfo.author.send('[Bot] ' + botName + '의 기능은 모두 개인 메세지로만 실행이 가능합니다.');
+    msgInfo.author.send('자세한 사용방법은 !help 명령을 이용해 보세요.');
+    return false;
+  }
+  return true;
+}
+
+// 룰 검사
+const checkRole = function(role, userID) {
+  logger.info('checkRole call');
+  var completeCheck = false;
+
+  if( !role || !userID ) {
+    logger.info('role check parameter check error...');
+    return false;
+  }
+
+  role.members.forEach( function(member, index, array) {
+    if( member.id == userID.id ) {
+      completeCheck = true;
+    }
+  });
+
+  return completeCheck;
+}
+
+// 간부급 검사
+const checkAdmin = function(msgInfo) {
+  if( checkRole( roleAdmin, msgInfo.author ) ) {
+    return true;
+  }
+
+  return auth.adminID.find( function(ids) { return ( ids == msgInfo.author.id ); });
+}
+
+// 현재 음악 연주자 검사
+const checkPlayMe = function(msgInfo) {
+  if( currentPlayMusic ) {
+    if( msgInfo.author.id == currentPlayMusic.user.id ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// 연합 유저 검사
+const check
+
 client.on('message', message => {
 
 	var msg = message.content;
@@ -259,36 +333,12 @@ client.on('message', message => {
 
 		logger.info('cmd : '  + cmd );
 
-		const checkDM = function(msgInfo) {
-			if( msgInfo.channel.type != 'dm' ) {
-				msgInfo.author.send('[Bot] Dj' + botName + '의 기능은 모두 개인 메세지로만 실행이 가능합니다.');
-				msgInfo.author.send('자세한 사용방법은 !help 명령을 이용해 보세요.');
-				return false;
-			}
-			return true;
-		}
-
-    const checkPlayMe = function(msgInfo) {
-      if( currentPlayMusic ) {
-        if( msgInfo.author.id == currentPlayMusic.user.id ) {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    const checkAdmin = function(msgInfo) {
-      return auth.adminID.find( function(ids) { return ( ids == msgInfo.author.id ); });
-		}
-
 		if( cmd.length > 1 ){
 
 			switch( cmd ) {
 				// !ping
 				case 'ping':
-
 					message.reply('pong > ' + text);
-
 					break;
 
 				case 'reg':
@@ -334,7 +384,7 @@ client.on('message', message => {
 
 				case 'ttsVol' : // TTS 볼륨 조절
 
-					if( !checkDM(message) ){ break; }
+					if( !checkDM(message) && checkAdmin(message) ){ break; }
 
 					voiceVolume = parseFloat(text);
 					message.reply('volume > ' + voiceVolume);
