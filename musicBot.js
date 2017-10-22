@@ -46,7 +46,7 @@ var defaultVoiceChannel;
 var currentPlayDispatcher;
 var youtubeDispatcher;
 var voiceVolume = 0.8;
-var youtubeVolume = 0.07;
+var youtubeVolume = 0.06;
 var offTTS = false;
 var voiceChannelID = auth.voiceChannelID;
 var mainGuild;
@@ -146,7 +146,7 @@ const playMusic = function() {
 				logger.info( 'playMusic > youtube info thumbnail = ' + music.thumbnail );
 				logger.info( 'playMusic > youtube info title = ' + music.title );
 
-				if( music.comment.length > 1 )	{
+				if( music.comment.length > 1 ) {
 					ttsEnd = false;
 					youTubeEnd = false;
 					sendTTS( music.comment, function() {
