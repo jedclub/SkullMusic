@@ -318,7 +318,22 @@ const checkPlayMe = function(msgInfo) {
 }
 
 // 연합 유저 검사
-const check
+const checkMember = function(msgInfo) {
+
+  if( checkRole( roleSkull, msgInfo.author ) ) {
+    return true;
+  }
+
+  if( checkRole( roleMonkey, msgInfo.author ) ) {
+    return true;
+  }
+
+  if( checkRole( roleWaien, msgInfo.author ) ) {
+    return true;
+  }
+
+  return false;
+}
 
 client.on('message', message => {
 
