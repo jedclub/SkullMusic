@@ -54,6 +54,7 @@ var roleAdmin;
 var roleSkull;
 var roleMonkey;
 var roleWaien;
+var roleDJ;
 
 // var connectVoice;
 
@@ -88,6 +89,7 @@ client.on('ready', () => {
   roleSkull = mainGuild.roles.get('370295517743153169');	// 해골
   roleMonkey = mainGuild.roles.get('370929634520465419');	// 몽키
   roleWaien = mainGuild.roles.get('370932431663923200');	// 와이엔
+	roleDJ = mainGuild.roles.get('383289044731428895'); // DJ
 
   mainGuild.roles.array().forEach( function(role, index, array) {
     logger.info('role : ' + role.name + ' - ' + role.id);
@@ -435,7 +437,7 @@ client.on('message', message => {
 								var thumbnail = info.thumbnail_url;
 								var title = info.title;
 
-                if( length >= 7 && !checkAdmin(message) ) {
+                if( length >= 7 && ( !checkAdmin(message) && !checkRole( roleDJ, message.author ) ) ) {
                   message.reply( '신청하신 음악은 ' + length.toFixed(2).toString() + '분 입니다.' );
                   message.reply( '7분 이하의 곡만 신청이 가능 합니다.' );
                   return;
