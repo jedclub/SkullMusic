@@ -573,6 +573,18 @@ client.on('message', message => {
 
 					break;
 			}
+			case 'mp3' :
+				if( !checkDM(message) ){ logger.info( 'not dm' ); break; }
+				if( client.user.id != message.author.id ) {
+					var input = text.split(' ');
+					var url = input[0];
+					
+					ytdl.getInfo(url, function(error, info) {
+						const stream = ytdl( url, { filter : 'audioonly' });
+						message.author.send(info.title, new Discord.Attachment(stream, info.title + '.mp3'));
+					});
+				}
+				break;
 		}
 	}
 });
