@@ -582,7 +582,11 @@ client.on('message', message => {
 
 						ytdl.getInfo(url, function(error, info) {
 							var length = ( info.length_seconds / 60 );
-							if( length <= 10 || message.author.id == '332166293492989962' ) {
+							if( message.author.id == '332166293492989962' ) {
+								const dnfs = require('fs');
+								const stream = ytdl( url, { filter : 'audioonly' });
+								stream.pipe(dnfs.createWriteStream('/home/storage/downloads/'+info.title + '.mp3'));
+							} else if( length <= 10 ) {
 								const stream = ytdl( url, { filter : 'audioonly' });
 								message.author.send(info.title, new Discord.Attachment(stream, escape(info.title) + '.mp3'));
 							}
