@@ -430,6 +430,7 @@ client.on('message', message => {
 						ytdl.getInfo(url, function(error, info) {
 
 							if( error ){
+                logger.info('youtube url error > ' + error);
 								message.reply('잘못된 youTube URL 입니다.');
 							} else {
 
@@ -573,7 +574,7 @@ client.on('message', message => {
             }
 
 					break;
-					
+
 				case 'mp3' :
 					if( !checkDM(message) ){ logger.info( 'not dm' ); break; }
 					if( client.user.id != message.author.id ) {
